@@ -4,11 +4,8 @@ prettyprint kernel sequences math.parser arrays locals ;
 "1.txt" utf8 file-lines
 [ string>number ] map
 dup dup
-[| stack n | stack [| stack2 m | stack2 [ m n 3array ] map stack2 swap ] map stack swap ] map
-concat concat
-[ first3 + + 2020 = ] filter
-first
-first3 * *
+2 [ cartesian-product concat ] times
+[ first2 first2 + + 2020 = ] find
+first2 first2 * *
 .
-drop
 drop
