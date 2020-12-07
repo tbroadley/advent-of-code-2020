@@ -11,7 +11,7 @@ IN: 5-1
 [ seat-parts ] map
 [ first2 [| row column | row "F" "B" parse-region column "L" "R" parse-region 2array ] call ] map
 [ first2 [| row column | row 8 * column + ] call ] map
-[ sum ] keep [ infimum ] keep [ supremum ] keep drop
+[| seat-numbers | seat-numbers sum seat-numbers infimum seat-numbers supremum ] call
 [| min max | min max 2array mean max min - 1 + * ] call
 swap -
 .
