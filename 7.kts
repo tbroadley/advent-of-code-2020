@@ -2,7 +2,6 @@ import java.io.File
 
 fun getBagCount(bagMap: Map<String, Map<String, Int>>, startingColour: String): Int {
   val bags = bagMap[startingColour] ?: return 0
-  println(bags)
 
   if (bags.isEmpty()) {
     return 0
