@@ -7,19 +7,24 @@ IN: 8-1
 
 : record-pc ( seen pc -- newseen ) 1array >hash-set union ;
 
-:: update-pc-acc ( pc acc program -- newpc newacc )
-     pc program nth {
-       { [ dup first "acc" = ] [ [let :> ( instruction ) pc 1 + instruction second acc + ] ] }
-       { [ dup first "jmp" = ] [ [let :> ( instruction ) instruction second pc + acc ] ] }
-       { [ first "nop" = ]     [ pc 1 + acc ] }
-     } cond ;
+:: update-pc ( instruction n pc -- newpc )
+     instruction "jmp" =
+     [ pc n + ]
+     [ pc 1 + ]
+     if ;
 
-:: simulate-instruction-helper ( program pc acc seen -- newstate )
-     seen pc record-pc
-     pc acc program update-pc-acc
-     [let :> ( newseen newpc newacc ) program newpc newacc newseen ] 4array ;
+:: update-acc ( instruction n acc -- newacc )
+     instruction "acc" =
+     [ acc n + ]
+     [ acc ]
+     if ;
 
-:: simulate-instruction ( state -- newstate ) state first4 simulate-instruction-helper ;
+:: simulate-instruction-helper ( program pc acc seen -- program newpc newacc newseen )
+     program
+     pc program nth first2 [ pc update-pc ] [ acc update-acc ] 2bi
+     seen pc record-pc ;
+
+:: simulate-instruction ( state -- newstate ) state first4 simulate-instruction-helper 4array ;
 
 : loop-detected? ( state -- ? ) [ second ] [ fourth ] bi in? ;
 
