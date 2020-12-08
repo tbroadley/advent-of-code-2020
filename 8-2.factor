@@ -9,10 +9,10 @@ IN: 8-1
 
 :: update-pc-acc ( pc acc program -- newpc newacc )
      pc program nth {
-       { [ dup first "acc" = ] [ [let :> ( instruction ) pc 1 + instruction second acc + 2array ] ] }
-       { [ dup first "jmp" = ] [ [let :> ( instruction ) instruction second pc + acc 2array ] ] }
-       { [ first "nop" = ]     [ pc 1 + acc 2array ] }
-     } cond first2 ;
+       { [ dup first "acc" = ] [ [let :> ( instruction ) pc 1 + instruction second acc + ] ] }
+       { [ dup first "jmp" = ] [ [let :> ( instruction ) instruction second pc + acc ] ] }
+       { [ first "nop" = ]     [ pc 1 + acc ] }
+     } cond ;
 
 :: simulate-instruction-helper ( program pc acc seen -- newstate )
      seen pc record-pc
@@ -25,32 +25,37 @@ IN: 8-1
 
 : program-done? ( state -- ? ) [ first length ] [ second ] bi = ;
 
-: done? ( state -- state ? ) [ ] [ loop-detected? ] [ program-done? ] tri or ;
+: done? ( state -- ? ) [ loop-detected? ] [ program-done? ] bi or ;
+
+: simulate ( state -- finalstate ) [ dup done? not ] [ simulate-instruction ] while ;
 
 : create-state ( program -- state ) 0 0 100 <hash-set> 4array ;
 
-: simulate ( state -- finalstate ) [ done? not ] [ simulate-instruction ] while ;
+:: replace-instruction ( instruction new -- newinstruction ) new instruction second 2array ;
 
 : flip-instruction ( instruction -- newinstruction )
     {
       { [ dup first "acc" = ] [ ] }
-      { [ dup first "jmp" = ] [ [let :> ( instruction ) "nop" instruction second 2array ] ] }
-      { [ dup first "nop" = ] [ [let :> ( instruction ) "jmp" instruction second 2array ] ] }
+      { [ dup first "jmp" = ] [ "nop" replace-instruction ] }
+      { [ dup first "nop" = ] [ "jmp" replace-instruction ] }
     } cond ;
 
-:: generate-candidate-program ( program elt index -- newprogram )
+:: generate-candidate-program ( program elt ix -- newprogram )
      elt flip-instruction
-     index
-     index program remove-nth
+     ix
+     ix program remove-nth
      insert-nth ;
 
-:: go ( program elt index -- program finalstate )
-     program program elt index generate-candidate-program create-state simulate ;
+:: simulate-changed-program ( program elt ix -- program finalstate )
+     program
+     program elt ix generate-candidate-program
+     create-state
+     simulate ;
 
 "8.txt" utf8 file-lines
 [ parse-instruction ] map
 dup
-[ go ] map-index
+[ simulate-changed-program ] map-index
 [ program-done? ] find
 third
 .
