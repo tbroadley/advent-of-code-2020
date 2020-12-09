@@ -26,4 +26,16 @@ IN: 9-1
     [ has-property? not ] find
     swap drop swap nth ;
 
+: part2 ( -- answer )
+    input
+    dup length 0 swap [a,b)
+    dup [ other-indices ] map concat
+    part1
+    [let :> ( ip discard to-check n )
+      to-check [ first2 swap ip subseq sum n = ] find
+      first2 swap ip subseq
+      [ infimum ] [ supremum ] bi +
+    ] swap drop ;
+
 part1 .
+part2 .
