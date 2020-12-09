@@ -7,11 +7,17 @@ IN: 9-1
 
 :: has-property? ( numbers ix -- numbers ? )
      ix last-25-indices
-     [ [let :> ( first-ix ) ix last-25-indices [ first-ix = not ] filter ] ] map
-     numbers f ;
+     ix last-25-indices
+     [ [let :> ( indices to-exclude ) indices dup [ to-exclude > ] filter [ to-exclude 2array ] map ] ] map concat
+     [ first2 [let :> ( ix1 ix2 ) ix1 numbers nth ix2 numbers nth + ix numbers nth = ] ] any?
+     [let :> ( discard ? ) numbers ? ] ;
 
-"9.txt" utf8 file-lines
-[ string>number ] map
-dup length 25 swap [a,b)
-[ has-property? not ] find
-drop swap nth .
+: input ( -- lines ) "9.txt" utf8 file-lines [ string>number ] map ;
+
+: part1 ( -- answer )
+    input
+    dup length 25 swap [a,b)
+    [ has-property? not ] find
+    swap drop swap nth ;
+
+part1 .
