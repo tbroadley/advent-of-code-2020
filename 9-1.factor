@@ -5,13 +5,13 @@ IN: 9-1
 
 :: last-25-indices ( ix -- list ) ix 25 - ix [a,b) ;
 
-:: has-property? ( numbers ix -- ? )
-     ix last-25-indices .
-     f ;
+:: has-property? ( numbers ix -- numbers ? )
+     ix last-25-indices
+     [ [let :> ( first-ix ) ix last-25-indices [ first-ix = not ] filter ] ] map
+     numbers f ;
 
 "9.txt" utf8 file-lines
 [ string>number ] map
 dup length 25 swap [a,b)
 [ has-property? not ] find
-.
-drop
+drop swap nth .
