@@ -1,5 +1,5 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint sequences math.parser
-arrays locals lists combinators sorting assocs ;
+arrays locals lists combinators sorting assocs memoize ;
 
 IN: 10
 
@@ -25,14 +25,12 @@ MEMO:: count-arrangements-helper ( last-seen to-see -- count )
          if
          + ;
 
-MEMO:: count-arrangements ( last-seen to-see -- count )
-     to-see length {
-       { 0 [ 1 ] }
-       { 1 [ 1 ] }
-       [
-         drop
-         last-seen to-see count-arrangements-helper
-       ]
+MEMO: count-arrangements ( last-seen to-see -- count )
+     [ ] [ length ] bi
+     {
+       { 0 [ 2drop 1 ] }
+       { 1 [ 2drop 1 ] }
+       [ drop count-arrangements-helper ]
      } case ;
 
 : part2 ( -- answer )
