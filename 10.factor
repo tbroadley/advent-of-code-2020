@@ -31,9 +31,8 @@ MEMO:: count-arrangements ( last-seen to-see -- count )
      } case ;
 
 : part2 ( -- answer )
+    0
     input natural-sort
-    0 prefix
-    [ first ] [ 1 tail ] bi
     count-arrangements ;
 
 part1 .
