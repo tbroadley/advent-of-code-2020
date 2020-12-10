@@ -16,16 +16,19 @@ IN: 10
     ;
 
 MEMO:: count-arrangements ( last-seen to-see -- count )
-     {
-       { [ to-see empty? ] [ 1 ] }
-       { [ to-see length 1 = ] [ 1 ] }
-       { [ to-see second last-seen - 3 <= ] [
-         to-see first to-see 1 tail count-arrangements
-         last-seen to-see 1 tail count-arrangements
+     to-see length {
+       { 0 [ 1 ] }
+       { 1 [ 1 ] }
+       [
+         drop
+         to-see [ first ] [ 1 tail ] bi count-arrangements
+         to-see second last-seen - 3 <=
+         [ last-seen to-see 1 tail count-arrangements ]
+         [ 0 ]
+         if
          +
-       ] }
-       [ to-see first to-see 1 tail count-arrangements ]
-     } cond ;
+       ]
+     } case ;
 
 : part2 ( -- answer )
     input natural-sort
