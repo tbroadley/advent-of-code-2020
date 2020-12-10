@@ -15,18 +15,23 @@ IN: 10
     [ first 1 + ] [ third 1 + ] bi *
     ;
 
+DEFER: count-arrangements
+
+MEMO:: count-arrangements-helper ( last-seen to-see -- count )
+         to-see [ first ] [ 1 tail ] bi count-arrangements
+         to-see second last-seen - 3 <=
+         [ last-seen to-see 1 tail count-arrangements ]
+         [ 0 ]
+         if
+         + ;
+
 MEMO:: count-arrangements ( last-seen to-see -- count )
      to-see length {
        { 0 [ 1 ] }
        { 1 [ 1 ] }
        [
          drop
-         to-see [ first ] [ 1 tail ] bi count-arrangements
-         to-see second last-seen - 3 <=
-         [ last-seen to-see 1 tail count-arrangements ]
-         [ 0 ]
-         if
-         +
+         last-seen to-see count-arrangements-helper
        ]
      } case ;
 
