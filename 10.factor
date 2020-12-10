@@ -15,22 +15,23 @@ IN: 10
     [ first 1 + ] [ third 1 + ] bi *
     ;
 
-MEMO:: count-arrangements ( seen to-see -- count )
+MEMO:: count-arrangements ( last-seen to-see -- count )
      {
        { [ to-see empty? ] [ 1 ] }
        { [ to-see length 1 = ] [ 1 ] }
-       { [ to-see second seen last - 3 <= ] [
-         seen to-see first suffix to-see 1 tail count-arrangements
-         seen to-see 1 tail count-arrangements
+       { [ to-see second last-seen - 3 <= ] [
+         to-see first to-see 1 tail count-arrangements
+         last-seen to-see 1 tail count-arrangements
          +
        ] }
-       [ seen to-see first suffix to-see 1 tail count-arrangements ]
+       [ to-see first to-see 1 tail count-arrangements ]
      } cond ;
 
 : part2 ( -- answer )
     input natural-sort
-    [ 1 head ] [ 1 tail ] bi
+    0 prefix
+    [ first ] [ 1 tail ] bi
     count-arrangements ;
 
-MEMO:: a ( in -- b ) in dup . first 1 + ;
-
+part1 .
+part2 .
