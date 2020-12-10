@@ -5,7 +5,7 @@ IN: 10
 
 : input ( -- lines ) "10.txt" utf8 file-lines [ string>number ] map ;
 
-:: count-differences ( prev n1 n2 -- next ) n2 n1 - 1 - prev [ 1 + ] change-nth prev ;
+:: count-differences ( prev n1 n2 -- next ) n2 n1 - 1 - prev [ [ 1 + ] change-nth ] keep ;
 
 : part1 ( -- answer )
     input natural-sort
