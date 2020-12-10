@@ -26,12 +26,10 @@ MEMO:: count-arrangements-helper ( last-seen to-see -- count )
          + ;
 
 MEMO: count-arrangements ( last-seen to-see -- count )
-     [ ] [ length ] bi
-     {
-       { 0 [ 2drop 1 ] }
-       { 1 [ 2drop 1 ] }
-       [ drop count-arrangements-helper ]
-     } case ;
+     [ ] [ length 1 <= ] bi
+     [ 2drop 1 ]
+     [ count-arrangements-helper ]
+     if ;
 
 : part2 ( -- answer )
     0
