@@ -34,9 +34,10 @@ IN: 11
 
 :: update-cell ( lines row cell column quot threshold -- lines row cell' )
      lines row
+     lines row column quot call
      {
-       { [ lines row column quot call [ "#" = not ] all? cell "L" = and ]           [ "#" ] }
-       { [ lines row column quot call [ "#" = ] count threshold >= cell "#" = and ] [ "L" ] }
+       { [ dup [ "#" = not ] all? cell "L" = and ]       [ drop "#" ] }
+       { [ [ "#" = ] count threshold >= cell "#" = and ] [ "L" ]      }
        [ cell ]
      } cond ; inline
 
