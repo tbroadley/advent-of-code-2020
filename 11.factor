@@ -5,13 +5,15 @@ IN: 10
 
 : input ( -- lines ) "11.txt" utf8 file-lines [ 1 group ] map ;
 
+: into ( r c lines -- cell ) [ swap ] dip ?nth ?nth ;
+
 :: adjacent-cell-indices ( row column -- indices )
      { -1 0 1 } { -1 0 1 } cartesian-product concat 4 swap remove-nth
      [ first2 [ row + ] [ column + ] bi* 2array ] map ;
 
 :: adjacent-cells ( lines row column -- cells )
      row column adjacent-cell-indices
-     [ first2 swap lines ?nth ?nth ] map
+     [ first2 lines into ] map
      [ ] filter ;
 
 :: visible-cells ( lines row column -- cells )
@@ -21,7 +23,7 @@ IN: 10
        [ [let :> ( rc n )
          rc
          rc first2 [ n * row + ] [ n * column + ] bi*
-         swap lines ?nth ?nth
+         lines into
          dup "." = [ drop f ] [ ] if
        ] ] map-find drop nip
      ] map ;
