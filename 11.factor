@@ -7,8 +7,12 @@ IN: 10
 
 : into ( r c lines -- cell ) [ swap ] dip ?nth ?nth ;
 
+: adjacent-cell-offsets ( -- offsets )
+    { -1 0 1 } { -1 0 1 } cartesian-product concat
+    4 swap remove-nth ;
+
 :: adjacent-cell-indices ( row column -- indices )
-     { -1 0 1 } { -1 0 1 } cartesian-product concat 4 swap remove-nth
+     adjacent-cell-offsets
      [ first2 [ row + ] [ column + ] bi* 2array ] map ;
 
 :: adjacent-cells ( lines row column -- cells )
@@ -17,7 +21,7 @@ IN: 10
      [ ] filter ;
 
 :: visible-cells ( lines row column -- cells )
-     { -1 0 1 } { -1 0 1 } cartesian-product concat 4 swap remove-nth
+     adjacent-cell-offsets
      [
        50 [1,b)
        [ [let :> ( rc n )
