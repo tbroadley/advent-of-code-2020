@@ -26,36 +26,28 @@ IN: 10
        ] ] map-find drop nip
      ] map ;
 
-:: update-cell ( lines row cell column -- lines row cell' )
+:: update-cell ( lines row cell column quot threshold -- lines row cell' )
      lines row
      {
-       { [ lines row column adjacent-cells [ "#" = not ] all? cell "L" = and ]  [ "#" ] }
-       { [ lines row column adjacent-cells [ "#" = ] count 3 > cell "#" = and ] [ "L" ] }
+       { [ lines row column quot call [ "#" = not ] all? cell "L" = and ]  [ "#" ] }
+       { [ lines row column quot call [ "#" = ] count threshold >= cell "#" = and ] [ "L" ] }
        [ cell ]
-     } cond ;
+     } cond ; inline
 
-:: update-cell-2 ( lines row cell column -- lines row cell' )
-     lines row
-     {
-       { [ lines row column visible-cells [ "#" = not ] all? cell "L" = and ]  [ "#" ] }
-       { [ lines row column visible-cells [ "#" = ] count 4 > cell "#" = and ] [ "L" ] }
-       [ cell ]
-     } cond ;
-
-: apply-rules ( lines -- lines' ) dup [ swap [ update-cell ] map-index nip ] map-index nip ;
-
-: apply-rules-2 ( lines -- lines' ) dup [ swap [ update-cell-2 ] map-index nip ] map-index nip ;
+:: apply-rules ( lines quot threshold -- lines' )
+   lines
+   lines [ swap [ quot threshold update-cell ] map-index nip ] map-index nip ; inline
 
 : count-occupied-seats ( lines -- count ) [ [ "#" = [ 1 ] [ 0 ] if ] map-sum ] map-sum ;
 
 : part1 ( -- answer )
     input
-    [ [ = ] keep swap ] [ dup apply-rules ] do until
+    [ [ = ] keep swap ] [ dup [ adjacent-cells ] 4 apply-rules ] do until
     count-occupied-seats ;
 
 : part2 ( -- answer )
     input
-    [ [ = ] keep swap ] [ dup apply-rules-2 ] do until
+    [ [ = ] keep swap ] [ dup [ visible-cells ] 5 apply-rules ] do until
     count-occupied-seats ;
 
 part1 .
