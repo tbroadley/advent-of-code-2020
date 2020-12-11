@@ -41,8 +41,8 @@ IN: 11
      } cond ; inline
 
 :: apply-rules ( lines quot threshold -- lines' )
-   lines
-   lines [ swap [ quot threshold update-cell ] map-index nip ] map-index nip ; inline
+     lines
+     lines [ swap [ quot threshold update-cell ] map-index nip ] map-index nip ; inline
 
 : count-occupied-seats ( lines -- count ) [ [ "#" = [ 1 ] [ 0 ] if ] map-sum ] map-sum ;
 
