@@ -50,14 +50,12 @@ IN: 10
 
 : part1 ( -- answer )
     input
-    dup apply-rules
-    [ [ = ] keep swap ] [ dup apply-rules ] until
+    [ [ = ] keep swap ] [ dup apply-rules ] do until
     count-occupied-seats ;
 
 : part2 ( -- answer )
     input
-    dup apply-rules-2
-    [ [ = ] keep swap ] [ dup apply-rules-2 ] until
+    [ [ = ] keep swap ] [ dup apply-rules-2 ] do until
     count-occupied-seats ;
 
 part1 .
