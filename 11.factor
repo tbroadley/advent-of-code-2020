@@ -17,7 +17,7 @@ IN: 10
 :: visible-cells ( lines row column -- cells )
      { -1 0 1 } { -1 0 1 } cartesian-product concat 4 swap remove-nth
      [
-       50 [0,b)
+       50 [1,b)
        [ [let :> ( rc n )
          rc
          rc first2 [ n * row + ] [ n * column + ] bi*
@@ -38,13 +38,13 @@ IN: 10
      lines row
      {
        { [ lines row column visible-cells [ "#" = not ] all? cell "L" = and ]  [ "#" ] }
-       { [ lines row column visible-cells [ "#" = ] count 3 > cell "#" = and ] [ "L" ] }
+       { [ lines row column visible-cells [ "#" = ] count 4 > cell "#" = and ] [ "L" ] }
        [ cell ]
      } cond ;
 
-: apply-rules ( lines -- lines' ) dup [ swap [ update-cell ] map-index nip ] map-index swap drop ;
+: apply-rules ( lines -- lines' ) dup [ swap [ update-cell ] map-index nip ] map-index nip ;
 
-: apply-rules-2 ( lines -- lines' ) dup [ swap [ update-cell-2 ] map-index nip ] map-index swap drop ;
+: apply-rules-2 ( lines -- lines' ) dup [ swap [ update-cell-2 ] map-index nip ] map-index nip ;
 
 : count-occupied-seats ( lines -- count ) [ [ "#" = [ 1 ] [ 0 ] if ] map-sum ] map-sum ;
 
@@ -58,7 +58,6 @@ IN: 10
     input
     dup apply-rules-2
     [ [ = ] keep swap ] [ dup apply-rules-2 ] until
-    dup [ concat ] map .
     count-occupied-seats ;
 
 part1 .
