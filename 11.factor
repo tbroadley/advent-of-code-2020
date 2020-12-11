@@ -11,9 +11,11 @@ IN: 10
     { -1 0 1 } { -1 0 1 } cartesian-product concat
     4 swap remove-nth ;
 
+:: offset ( rc n row column -- row' column' ) rc first2 [ n * row + ] [ n * column + ] bi* ;
+
 :: adjacent-cell-indices ( row column -- indices )
      adjacent-cell-offsets
-     [ first2 [ row + ] [ column + ] bi* 2array ] map ;
+     [ 1 row column offset 2array ] map ;
 
 :: adjacent-cells ( lines row column -- cells )
      row column adjacent-cell-indices
@@ -26,7 +28,7 @@ IN: 10
        50 [1,b)
        [ [let :> ( rc n )
          rc
-         rc first2 [ n * row + ] [ n * column + ] bi*
+         rc n row column offset
          lines into
          dup "." = [ drop f ] [ ] if
        ] ] map-find drop nip
