@@ -5,7 +5,7 @@ IN: 11
 
 : input ( -- lines ) "11.txt" utf8 file-lines [ 1 group ] map ;
 
-: into ( r c lines -- cell ) [ swap ] dip ?nth ?nth ;
+: index-into ( r c lines -- cell ) [ swap ] dip ?nth ?nth ;
 
 : adjacent-cell-offsets ( -- offsets )
     { -1 0 1 } { -1 0 1 } cartesian-product concat
@@ -19,13 +19,13 @@ IN: 11
 
 :: adjacent-cells ( lines row column -- cells )
      row column adjacent-cell-indices
-     [ first2 lines into ] map
+     [ first2 lines index-into ] map
      [ ] filter ;
 
 :: find-visible-cell ( rc n lines row column -- rc visible-cell )
      rc
      rc n row column offset
-     lines into
+     lines index-into
      dup "." = [ drop f ] [ ] if ;
 
 :: visible-cells ( lines row column -- cells )
