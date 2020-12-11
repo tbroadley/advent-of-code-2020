@@ -1,7 +1,7 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint sequences
 arrays locals lists combinators grouping math.ranges ;
 
-IN: 10
+IN: 11
 
 : input ( -- lines ) "11.txt" utf8 file-lines [ 1 group ] map ;
 
