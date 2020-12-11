@@ -22,17 +22,15 @@ IN: 10
      [ first2 lines into ] map
      [ ] filter ;
 
+:: find-visible-cell ( rc n lines row column -- rc visible-cell )
+     rc
+     rc n row column offset
+     lines into
+     dup "." = [ drop f ] [ ] if ;
+
 :: visible-cells ( lines row column -- cells )
      adjacent-cell-offsets
-     [
-       50 [1,b)
-       [ [let :> ( rc n )
-         rc
-         rc n row column offset
-         lines into
-         dup "." = [ drop f ] [ ] if
-       ] ] map-find drop nip
-     ] map ;
+     [ 50 [1,b) [ lines row column find-visible-cell ] map-find drop nip ] map ;
 
 :: update-cell ( lines row cell column quot threshold -- lines row cell' )
      lines row
