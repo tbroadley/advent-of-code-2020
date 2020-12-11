@@ -36,8 +36,8 @@ IN: 11
      lines row
      lines row column quot call
      {
-       { [ dup [ "#" = not ] all?       cell "L" = and ] [ drop "#" ] }
-       { [ [ "#" = ] count threshold >= cell "#" = and ] [ "L" ]      }
+       { [ dup [ "#" = not ] all?           cell "L" = and ] [ drop "#" ] }
+       { [     [ "#" = ] count threshold >= cell "#" = and ] [ "L" ]      }
        [ cell ]
      } cond ; inline
 
