@@ -22,7 +22,7 @@ IN: 10
          rc
          rc first2 [ n * row + ] [ n * column + ] bi*
          swap lines ?nth ?nth
-         dup "." = [ ] [ drop f ] if
+         dup "." = [ drop f ] [ ] if
        ] ] map-find drop nip
      ] map ;
 
