@@ -31,31 +31,40 @@ C: <state> state
     "E" 0 0 <state> [ first2 next-state ] reduce
     [ x>> abs ] [ y>> abs ] bi + ;
 
-:: rotate-waypoint-left ( wx wy n -- wx' wy' )
-     n 90 /
+TUPLE: state-2 x y wx wy ;
+C: <state-2> state-2
+
+:: rotate-waypoint-left ( s degrees -- s' )
+     degrees 90 /
      {
        { { 1 0 }  { 0 1 }  }
        { { 0 -1 } { 1 0 }  }
        { { -1 0 } { 0 -1 } }
        { { 0 1 }  { -1 0 } }
      } nth
-     { wx wy } m.v first2 ;
+     s [ wx>> ] [ wy>> ] bi 2array m.v first2
+     s [ drop swap ] change-wx swap >>wy ;
 
-:: next-state-2 ( x y wx wy instr instr-n -- x' y' wx' wy' )
-     instr {
-       { "N" [ x y wx wy instr-n + ] }
-       { "S" [ x y wx wy instr-n - ] }
-       { "E" [ x y wx instr-n + wy ] }
-       { "W" [ x y wx instr-n - wy ] }
-       { "L" [ x y wx wy instr-n rotate-waypoint-left ] }
-       { "R" [ x y wx wy 360 instr-n - rotate-waypoint-left ] }
-       { "F" [ x y [ wx instr-n * + ] [ wy instr-n * + ] bi* wx wy ] }
+:: next-state-2 ( s instr instr-n -- s' )
+     s instr {
+       { "N" [ [ instr-n + ] change-wy ] }
+       { "S" [ [ instr-n - ] change-wy ] }
+       { "E" [ [ instr-n + ] change-wx ] }
+       { "W" [ [ instr-n - ] change-wx ] }
+       { "L" [ instr-n rotate-waypoint-left ] }
+       { "R" [ 360 instr-n - rotate-waypoint-left ] }
+       { "F" [
+               [ [ x>> ] [ wx>> ] bi instr-n * + ]
+               [ [ y>> ] [ wy>> ] bi instr-n * + ] bi
+               s [ drop swap ] change-x swap >>y
+             ]
+       }
      } case ;
 
 : part2 ( -- answer )
     input
-    { 0 0 10 1 } [ first2 [ first4 ] 2dip next-state-2 4array ] reduce
-    [ first abs ] [ second abs ] bi + ;
+    0 0 10 1 <state-2> [ first2 next-state-2 ] reduce
+    [ x>> abs ] [ y>> abs ] bi + ;
 
 part1 .
 part2 .
