@@ -46,7 +46,7 @@ IN: 12
        { "E" [ x y wx instr-n - wy ] }
        { "L" [ x y wx wy instr-n rotate-waypoint-left ] }
        { "R" [ x y wx wy 360 instr-n - rotate-waypoint-left ] }
-       { "F" [ x y [ wx instr-n * + ] [ wx instr-n * + ] bi* wx wy ] }
+       { "F" [ x y [ wx instr-n * + ] [ wy instr-n * + ] bi* wx wy ] }
      } case ;
 
 : part2 ( -- answer )
