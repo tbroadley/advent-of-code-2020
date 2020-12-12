@@ -16,14 +16,14 @@ C: <state> state
      { "N" "W" "S" "E" } nth ;
 
 :: next-state ( s instr instr-n -- s' )
-     instr {
-       { "N" [ s [ instr-n + ] change-y ] }
-       { "S" [ s [ instr-n - ] change-y ] }
-       { "E" [ s [ instr-n + ] change-x ] }
-       { "W" [ s [ instr-n - ] change-x ] }
-       { "L" [ s [ instr-n turn-left ] change-dir ] }
-       { "R" [ s [ 360 instr-n - turn-left ] change-dir ] }
-       { "F" [ s s dir>> instr-n next-state ] }
+     s instr {
+       { "N" [ [ instr-n + ] change-y ] }
+       { "S" [ [ instr-n - ] change-y ] }
+       { "E" [ [ instr-n + ] change-x ] }
+       { "W" [ [ instr-n - ] change-x ] }
+       { "L" [ [ instr-n turn-left ] change-dir ] }
+       { "R" [ [ 360 instr-n - turn-left ] change-dir ] }
+       { "F" [ dup dir>> instr-n next-state ] }
      } case ;
 
 : part1 ( -- answer )
