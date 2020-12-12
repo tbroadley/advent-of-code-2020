@@ -1,5 +1,5 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint sequences math.parser assocs
-arrays locals lists combinators grouping math.ranges strings math.matrices ;
+arrays locals lists combinators grouping math.ranges strings math.matrices accessors ;
 
 IN: 12
 
@@ -7,26 +7,29 @@ IN: 12
     "12.txt" utf8 file-lines
     [ [ first 1string ] map ] [ [ 1 tail string>number ] map ] bi zip ;
 
-:: turn-left ( dir n -- dir' )
+TUPLE: state dir x y ;
+C: <state> state
+
+:: turn-left ( dir degrees -- dir' )
      dir { "N" "W" "S" "E" } index
-     n 90 / + 4 mod
+     degrees 90 / + 4 mod
      { "N" "W" "S" "E" } nth ;
 
-:: next-state ( dir x y instr instr-n -- dir' x' y' )
+:: next-state ( s instr instr-n -- s' )
      instr {
-       { "N" [ dir x y instr-n + ] }
-       { "S" [ dir x y instr-n - ] }
-       { "E" [ dir x instr-n + y ] }
-       { "W" [ dir x instr-n - y ] }
-       { "L" [ dir instr-n turn-left x y ] }
-       { "R" [ dir 360 instr-n - turn-left x y ] }
-       { "F" [ dir x y dir instr-n next-state ] }
+       { "N" [ s [ instr-n + ] change-y ] }
+       { "S" [ s [ instr-n - ] change-y ] }
+       { "E" [ s [ instr-n + ] change-x ] }
+       { "W" [ s [ instr-n - ] change-x ] }
+       { "L" [ s [ instr-n turn-left ] change-dir ] }
+       { "R" [ s [ 360 instr-n - turn-left ] change-dir ] }
+       { "F" [ s s dir>> instr-n next-state ] }
      } case ;
 
 : part1 ( -- answer )
     input
-    { "E" 0 0 } [ first2 [ first3 ] 2dip next-state 3array ] reduce
-    [ second abs ] [ third abs ] bi + ;
+    "E" 0 0 <state> [ first2 next-state ] reduce
+    [ x>> abs ] [ y>> abs ] bi + ;
 
 :: rotate-waypoint-left ( wx wy n -- wx' wy' )
      n 90 /
