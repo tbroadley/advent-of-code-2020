@@ -34,14 +34,17 @@ C: <state> state
 TUPLE: state-2 x y dx dy ;
 C: <state-2> state-2
 
+: rotation-matrix ( degrees -- matrix )
+    90 /
+    {
+      { { 1 0 }  { 0 1 }  }
+      { { 0 -1 } { 1 0 }  }
+      { { -1 0 } { 0 -1 } }
+      { { 0 1 }  { -1 0 } }
+    } nth ;
+
 :: rotate-waypoint-left ( s degrees -- s' )
-     degrees 90 /
-     {
-       { { 1 0 }  { 0 1 }  }
-       { { 0 -1 } { 1 0 }  }
-       { { -1 0 } { 0 -1 } }
-       { { 0 1 }  { -1 0 } }
-     } nth
+     degrees rotation-matrix
      s [ dx>> ] [ dy>> ] bi 2array m.v first2
      s swap >>dy swap >>dx ;
 
