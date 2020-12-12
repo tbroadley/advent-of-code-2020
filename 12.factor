@@ -31,7 +31,7 @@ C: <state> state
     "E" 0 0 <state> [ first2 next-state ] reduce
     [ x>> abs ] [ y>> abs ] bi + ;
 
-TUPLE: state-2 x y wx wy ;
+TUPLE: state-2 x y dx dy ;
 C: <state-2> state-2
 
 :: rotate-waypoint-left ( s degrees -- s' )
@@ -42,20 +42,20 @@ C: <state-2> state-2
        { { -1 0 } { 0 -1 } }
        { { 0 1 }  { -1 0 } }
      } nth
-     s [ wx>> ] [ wy>> ] bi 2array m.v first2
-     s swap >>wy swap >>wx ;
+     s [ dx>> ] [ dy>> ] bi 2array m.v first2
+     s swap >>dy swap >>dx ;
 
 :: next-state-2 ( s instr instr-n -- s' )
      s instr {
-       { "N" [ [ instr-n + ] change-wy ] }
-       { "S" [ [ instr-n - ] change-wy ] }
-       { "E" [ [ instr-n + ] change-wx ] }
-       { "W" [ [ instr-n - ] change-wx ] }
+       { "N" [ [ instr-n + ] change-dy ] }
+       { "S" [ [ instr-n - ] change-dy ] }
+       { "E" [ [ instr-n + ] change-dx ] }
+       { "W" [ [ instr-n - ] change-dx ] }
        { "L" [ instr-n rotate-waypoint-left ] }
        { "R" [ 360 instr-n - rotate-waypoint-left ] }
        { "F" [
-               [ [ x>> ] [ wx>> instr-n * ] bi + ] keep swap >>x
-               [ [ y>> ] [ wy>> instr-n * ] bi + ] keep swap >>y
+               [ [ x>> ] [ dx>> instr-n * ] bi + ] keep swap >>x
+               [ [ y>> ] [ dy>> instr-n * ] bi + ] keep swap >>y
              ]
        }
      } case ;
