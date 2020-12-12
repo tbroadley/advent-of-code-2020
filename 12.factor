@@ -12,11 +12,6 @@ IN: 12
      n 90 / + 4 mod
      { "N" "W" "S" "E" } nth ;
 
-:: turn-right ( dir n -- dir' )
-     dir { "N" "E" "S" "W" } index
-     n 90 / + 4 mod
-     { "N" "E" "S" "W" } nth ;
-
 :: next-state ( dir x y instr instr-n -- dir' x' y' )
      instr {
        { "N" [ dir x y instr-n + ] }
@@ -24,7 +19,7 @@ IN: 12
        { "W" [ dir x instr-n + y ] }
        { "E" [ dir x instr-n - y ] }
        { "L" [ dir instr-n turn-left x y ] }
-       { "R" [ dir instr-n turn-right x y ] }
+       { "R" [ dir 360 instr-n - turn-left x y ] }
        { "F" [ dir x y dir instr-n next-state ] }
      } case ;
 
@@ -43,16 +38,6 @@ IN: 12
      } nth
      { wx wy } m.v first2 ;
 
-:: rotate-waypoint-right ( wx wy n -- wx' wy' )
-     n 90 /
-     {
-       { { 1 0 }  { 0 1 }  }
-       { { -1 0 } { 0 -1 } }
-       { { 0 1 }  { -1 0 } }
-       { { 0 -1 } { 1 0 }  }
-     } nth
-     { wx wy } m.v first2 ;
-
 :: next-state-2 ( x y wx wy instr instr-n -- x' y' wx' wy' )
      instr {
        { "N" [ x y wx wy instr-n + ] }
@@ -60,7 +45,7 @@ IN: 12
        { "W" [ x y wx instr-n + wy ] }
        { "E" [ x y wx instr-n - wy ] }
        { "L" [ x y wx wy instr-n rotate-waypoint-left ] }
-       { "R" [ x y wx wy instr-n rotate-waypoint-right ] }
+       { "R" [ x y wx wy 360 instr-n - rotate-waypoint-left ] }
        { "F" [ x y [ wx instr-n * + ] [ wx instr-n * + ] bi* wx wy ] }
      } case ;
 
