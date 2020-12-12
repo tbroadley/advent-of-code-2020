@@ -16,8 +16,8 @@ IN: 12
      instr {
        { "N" [ dir x y instr-n + ] }
        { "S" [ dir x y instr-n - ] }
-       { "W" [ dir x instr-n + y ] }
-       { "E" [ dir x instr-n - y ] }
+       { "E" [ dir x instr-n + y ] }
+       { "W" [ dir x instr-n - y ] }
        { "L" [ dir instr-n turn-left x y ] }
        { "R" [ dir 360 instr-n - turn-left x y ] }
        { "F" [ dir x y dir instr-n next-state ] }
@@ -32,9 +32,9 @@ IN: 12
      n 90 /
      {
        { { 1 0 }  { 0 1 }  }
-       { { 0 1 }  { -1 0 } }
-       { { -1 0 } { 0 -1 } }
        { { 0 -1 } { 1 0 }  }
+       { { -1 0 } { 0 -1 } }
+       { { 0 1 }  { -1 0 } }
      } nth
      { wx wy } m.v first2 ;
 
@@ -42,8 +42,8 @@ IN: 12
      instr {
        { "N" [ x y wx wy instr-n + ] }
        { "S" [ x y wx wy instr-n - ] }
-       { "W" [ x y wx instr-n + wy ] }
-       { "E" [ x y wx instr-n - wy ] }
+       { "E" [ x y wx instr-n + wy ] }
+       { "W" [ x y wx instr-n - wy ] }
        { "L" [ x y wx wy instr-n rotate-waypoint-left ] }
        { "R" [ x y wx wy 360 instr-n - rotate-waypoint-left ] }
        { "F" [ x y [ wx instr-n * + ] [ wy instr-n * + ] bi* wx wy ] }
