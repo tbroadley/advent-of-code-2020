@@ -43,7 +43,7 @@ C: <state-2> state-2
        { { 0 1 }  { -1 0 } }
      } nth
      s [ wx>> ] [ wy>> ] bi 2array m.v first2
-     s [ drop swap ] change-wx swap >>wy ;
+     s swap >>wy swap >>wx ;
 
 :: next-state-2 ( s instr instr-n -- s' )
      s instr {
@@ -56,7 +56,7 @@ C: <state-2> state-2
        { "F" [
                [ [ x>> ] [ wx>> ] bi instr-n * + ]
                [ [ y>> ] [ wy>> ] bi instr-n * + ] bi
-               s [ drop swap ] change-x swap >>y
+               s swap >>y swap >>x
              ]
        }
      } case ;
