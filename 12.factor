@@ -11,9 +11,9 @@ TUPLE: state dir x y ;
 C: <state> state
 
 :: turn-left ( dir degrees -- dir' )
-     dir { "N" "W" "S" "E" } index
+     dir { "N" "W" "S" "E" } [ index ] keep swap
      degrees 90 / + 4 mod
-     { "N" "W" "S" "E" } nth ;
+     swap nth ;
 
 :: next-state ( s instr instr-n -- s' )
      s instr {
