@@ -54,9 +54,8 @@ C: <state-2> state-2
        { "L" [ instr-n rotate-waypoint-left ] }
        { "R" [ 360 instr-n - rotate-waypoint-left ] }
        { "F" [
-               [ [ x>> ] [ wx>> ] bi instr-n * + ]
-               [ [ y>> ] [ wy>> ] bi instr-n * + ] bi
-               s swap >>y swap >>x
+               [ [ x>> ] [ wx>> instr-n * ] bi + ] keep swap >>x
+               [ [ y>> ] [ wy>> instr-n * ] bi + ] keep swap >>y
              ]
        }
      } case ;
