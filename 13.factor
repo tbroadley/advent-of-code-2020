@@ -27,7 +27,7 @@ C: <input> input
 : construct-congruences ( buses -- congruences )
     [ length [0,b) [ 0 swap - ] map ] keep zip
     [ second "x" = not ] filter
-    [ first2 [ mod ] keep [ + ] keep [ mod ] keep 2array ] map ;
+    [ first2 [ rem ] keep 2array ] map ;
 
 :: sieve-helper ( x1 n1 x2 n2 -- x' n' )
      x1 [ n1 + ] lfrom-by
