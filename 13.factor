@@ -3,14 +3,11 @@ arrays locals lists combinators grouping math.ranges strings accessors splitting
 
 IN: 12
 
-TUPLE: input ts buses ;
-C: <input> input
-
 : parse-buses ( line -- buses ) "," split [ [ string>number ] keep or ] map ;
 
-: get-input ( -- lines )
+: get-input ( -- ts buses )
     "13.txt" utf8 file-lines
-    [ first string>number ] [ second parse-buses ] bi <input> ;
+    [ first string>number ] [ second parse-buses ] bi ;
 
 :: bus-after-ts ( bus ts -- after )
      ts bus / ceiling bus * ;
@@ -22,7 +19,7 @@ C: <input> input
 
 : part1 ( -- answer )
     get-input
-    [ ts>> ] [ buses>> [ "x" = not ] filter ] bi
+    [ "x" = not ] filter
     part1-helper ;
 
 : construct-congruences ( buses -- congruences )
@@ -43,7 +40,7 @@ C: <input> input
      quot foldl ; inline
 
 : part2 ( -- answer )
-    get-input buses>>
+    get-input nip
     construct-congruences
     >list [ sieve ] lreduce first
     ;
