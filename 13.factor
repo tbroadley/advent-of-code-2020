@@ -12,17 +12,18 @@ C: <input> input
     "13.txt" utf8 file-lines
     [ first string>number ] [ second parse-buses ] bi <input> ;
 
-:: bus-after-ts ( ts bus -- ts after )
-     ts
+:: bus-after-ts ( bus ts -- after )
      ts bus / ceiling bus * ;
+
+:: part1-helper ( ts buses -- answer )
+     buses buses [ ts bus-after-ts ] map zip
+     [ second ] infimum-by first2
+     [let :> ( bus after ) after ts - bus * ] ;
 
 : part1 ( -- answer )
     get-input
     [ ts>> ] [ buses>> [ "x" = not ] filter ] bi
-    [ [ bus-after-ts ] map ] keep swap zip
-    [ second ] infimum-by first2
-    [let :> ( ts bus after ) after ts - bus * ]
-    ;
+    part1-helper ;
 
 : construct-congruences ( buses -- congruences )
     [ length [0,b) [ 0 swap - ] map ] keep zip
