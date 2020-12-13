@@ -1,5 +1,5 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint sequences math.parser assocs
-arrays locals lists combinators grouping math.ranges strings accessors splitting math.functions ;
+arrays locals lists combinators grouping math.ranges strings accessors splitting math.functions lists.lazy ;
 
 IN: 12
 
@@ -24,8 +24,22 @@ C: <input> input
     [let :> ( ts bus after ) after ts - bus * ]
     ;
 
+: construct-congruences ( buses -- congruences )
+    [ length [0,b) [ 0 swap - ] map ] keep zip
+    [ second "x" = not ] filter
+    [ first2 [ mod ] keep [ + ] keep [ mod ] keep 2array ] map ;
+
+:: sieve ( lc1 lc2 -- lc )
+     lc1 first [ lc1 second + ] lfrom-by
+     [ lc2 second mod lc2 first = ] lfilter car
+     lc1 second lc2 second *
+     2array ;
+
 : part2 ( -- answer )
-    0
+    get-input buses>>
+    construct-congruences
+    [ 2 tail >list ] [ first2 sieve ] bi [ sieve ] foldl
+    first
     ;
 
 part1 .
