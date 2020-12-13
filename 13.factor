@@ -36,11 +36,15 @@ C: <input> input
 
 : sieve ( lc1 lc2 -- lc ) [ first2 ] bi@ sieve-helper 2array ;
 
+:: lreduce ( list quot -- result )
+     list cdr cdr
+     list 2car quot call
+     quot foldl ; inline
+
 : part2 ( -- answer )
     get-input buses>>
     construct-congruences
-    [ 2 tail >list ] [ first2 sieve ] bi [ sieve ] foldl
-    first
+    >list [ sieve ] lreduce first
     ;
 
 part1 .
