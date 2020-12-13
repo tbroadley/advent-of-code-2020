@@ -29,11 +29,12 @@ C: <input> input
     [ second "x" = not ] filter
     [ first2 [ mod ] keep [ + ] keep [ mod ] keep 2array ] map ;
 
-:: sieve ( lc1 lc2 -- lc )
-     lc1 first [ lc1 second + ] lfrom-by
-     [ lc2 second mod lc2 first = ] lfilter car
-     lc1 second lc2 second *
-     2array ;
+:: sieve-helper ( x1 n1 x2 n2 -- x' n' )
+     x1 [ n1 + ] lfrom-by
+     [ n2 mod x2 = ] lfilter car
+     n1 n2 * ;
+
+: sieve ( lc1 lc2 -- lc ) [ first2 ] bi@ sieve-helper 2array ;
 
 : part2 ( -- answer )
     get-input buses>>
