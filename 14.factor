@@ -49,10 +49,10 @@ C: <state> state
     address state memory>> set-at
     state ;
 
-:: execute ( state instruction execute-mem[]=-quot -- state' )
-    instruction mask=?
-    [ state instruction mask>> execute-mask= ]
-    [ state instruction [ address>> ] [ value>> ] bi execute-mem[]=-quot call ] if ; inline
+:: execute ( s instr q -- state' )
+    s instr dup mask=?
+    [ mask>> execute-mask= ]
+    [ [ address>> ] [ value>> ] bi q call ] if ; inline
 
 :: solve ( execute-mem[]=-quot -- answer )
     input
