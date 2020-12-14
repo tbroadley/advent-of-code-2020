@@ -49,16 +49,18 @@ C: <state> state
     address state memory>> set-at
     state ;
 
-: execute ( state instruction -- state' )
-    dup mask=?
-    [ mask>> execute-mask= ]
-    [ [ address>> ] [ value>> ] bi execute-mem[]= ] if ;
+:: execute ( state instruction execute-mem[]=-quot -- state' )
+    instruction mask=?
+    [ state instruction mask>> execute-mask= ]
+    [ state instruction [ address>> ] [ value>> ] bi execute-mem[]=-quot call ] if ; inline
 
-: part1 ( -- answer )
+:: solve ( execute-mem[]=-quot -- answer )
     input
     H{ } clone 36 CHAR: X <string> <state>
-    [ execute ] reduce
-    memory>> values sum ;
+    [ execute-mem[]=-quot execute ] reduce
+    memory>> values sum ; inline
+
+: part1 ( -- answer ) [ execute-mem[]= ] solve ;
 
 :: apply-floating-bit ( address index -- addresses )
      address [ index set-bit ] [ index clear-bit ] bi 2array ;
@@ -78,16 +80,7 @@ C: <state> state
     [ value swap state memory>> set-at ] each
     state ;
 
-: execute-2 ( state instruction -- state' )
-    dup mask=?
-    [ mask>> execute-mask= ]
-    [ [ address>> ] [ value>> ] bi execute-mem[]=-2 ] if ;
-
-: part2 ( -- answer )
-    input
-    H{ } clone 36 CHAR: X <string> <state>
-    [ execute-2 ] reduce
-    memory>> values sum ;
+: part2 ( -- answer ) [ execute-mem[]=-2 ] solve ;
 
 part1 .
 part2 .
