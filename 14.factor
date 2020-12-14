@@ -60,11 +60,14 @@ C: <state> state
     [ execute ] reduce
     memory>> values sum ;
 
+:: apply-floating-bit ( address index -- addresses )
+     address [ index set-bit ] [ index clear-bit ] bi 2array ;
+
 :: update-bit-2 ( addresses mask-c index -- addresses' )
     mask-c {
       { CHAR: 0 [ addresses ] }
       { CHAR: 1 [ addresses [ index set-bit ] map ] }
-      [ drop addresses [ [ index set-bit ] [ index clear-bit ] bi 2array ] map-concat ]
+      [ drop addresses [ index apply-floating-bit ] map-concat ]
     } case ;
 
 :: mask-address ( address mask -- addresses )
