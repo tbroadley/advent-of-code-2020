@@ -28,6 +28,8 @@ C: <mem[]=> mem[]=
 : input ( -- instructions )
     "14.txt" utf8 file-lines [ parse-line ] map ;
 
+
+
 TUPLE: state memory mask ;
 
 C: <state> state
@@ -62,6 +64,8 @@ C: <state> state
 
 : part1 ( -- answer ) [ execute-mem[]= ] solve ;
 
+
+
 : apply-floating-bit ( address index -- addresses )
      [ set-bit ] [ clear-bit ] 2bi 2array ;
 
@@ -81,6 +85,8 @@ C: <state> state
     state ;
 
 : part2 ( -- answer ) [ execute-mem[]=-2 ] solve ;
+
+
 
 part1 .
 part2 .
