@@ -12,13 +12,16 @@ ERROR: invalid-instruction ;
 C: <mask=> mask=
 C: <mem[]=> mem[]=
 
+: parse-mask= ( mask -- mask-cs )
+    reverse [ 2array ] map-index <mask=> ;
+
 : parse-mem[]= ( after-mem[ -- mem[]= )
     "] = " split1 [ string>number ] bi@ <mem[]=> ;
 
 : parse-line ( line -- instruction )
     {
-      { [ dup "mask = " ?head ] [ nip <mask=> ] }
-      { [ "mem[" ?head ] [ nip parse-mem[]= ] }
+      { [ dup "mask = " ?head ] [ nip parse-mask= ] }
+      { [     "mem["    ?head ] [ nip parse-mem[]= ] }
       [ invalid-instruction ]
     } cond ;
 
@@ -39,8 +42,7 @@ C: <state> state
     } case ;
 
 :: mask-value ( value mask -- value' )
-    mask reverse [ 2array ] map-index
-    value [ first2 update-bit ] reduce ;
+    mask value [ first2 update-bit ] reduce ;
 
 :: execute-mem[]= ( state address value -- state' )
     value state mask>> mask-value
@@ -66,8 +68,7 @@ C: <state> state
     } case ;
 
 :: mask-address ( address mask -- addresses )
-    mask reverse [ 2array ] map-index
-    address 1array [ first2 update-bit-2 ] reduce ;
+    mask address 1array [ first2 update-bit-2 ] reduce ;
 
 :: execute-mem[]=-2 ( state address value -- state' )
     address state mask>> mask-address
