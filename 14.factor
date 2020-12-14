@@ -19,9 +19,9 @@ C: <mem[]=> mem[]=
     "] = " split1 [ string>number ] bi@ <mem[]=> ;
 
 : parse-line ( line -- instruction )
-    {
-      { [ dup "mask = " ?head ] [ nip parse-mask= ] }
-      { [     "mem["    ?head ] [ nip parse-mem[]= ] }
+    dup {
+      { [ "mask = " ?head ] [ nip parse-mask=  ] }
+      { [ "mem["    ?head ] [ nip parse-mem[]= ] }
       [ invalid-instruction ]
     } cond ;
 
