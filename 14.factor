@@ -62,18 +62,18 @@ C: <state> state
 
 : part1 ( -- answer ) [ execute-mem[]= ] solve ;
 
-:: apply-floating-bit ( address index -- addresses )
-     address [ index set-bit ] [ index clear-bit ] bi 2array ;
+: apply-floating-bit ( address index -- addresses )
+     [ set-bit ] [ clear-bit ] 2bi 2array ;
 
 :: update-bit-2 ( addresses mask-c index -- addresses' )
-    mask-c {
-      { CHAR: 0 [ addresses ] }
-      { CHAR: 1 [ addresses [ index set-bit ] map ] }
-      [ drop addresses [ index apply-floating-bit ] map-concat ]
+    addresses mask-c {
+      { CHAR: 0 [ ] }
+      { CHAR: 1 [ [ index set-bit ] map ] }
+      [ drop [ index apply-floating-bit ] map-concat ]
     } case ;
 
-:: mask-address ( address mask -- addresses )
-    mask address 1array [ first2 update-bit-2 ] reduce ;
+: mask-address ( address mask -- addresses )
+    swap 1array [ first2 update-bit-2 ] reduce ;
 
 :: execute-mem[]=-2 ( state address value -- state' )
     address state mask>> mask-address
