@@ -51,16 +51,15 @@ C: <state> state
     address state memory>> set-at
     state ;
 
-:: execute ( s instr q -- state' )
-    s instr dup mask=?
+:: execute ( state instr quot -- state' )
+    state instr dup mask=?
     [ mask>> execute-mask= ]
-    [ [ address>> ] [ value>> ] bi q call ] if ; inline
+    [ [ address>> ] [ value>> ] bi quot call ] if ; inline
 
-:: solve ( execute-mem[]=-quot -- answer )
+:: solve ( quot -- answer )
     input
     H{ } clone 36 CHAR: X <string> <state>
-    [ execute-mem[]=-quot execute ] reduce
-    memory>> values sum ; inline
+    [ quot execute ] reduce memory>> values sum ; inline
 
 : part1 ( -- answer ) [ execute-mem[]= ] solve ;
 
@@ -76,11 +75,11 @@ C: <state> state
       [ drop [ index apply-floating-bit ] map-concat ]
     } case ;
 
-: mask-address ( address mask -- addresses )
-    swap 1array [ first2 update-bit-2 ] reduce ;
+: mask-address ( mask address -- addresses )
+    1array [ first2 update-bit-2 ] reduce ;
 
 :: execute-mem[]=-2 ( state address value -- state' )
-    address state mask>> mask-address
+    state mask>> address mask-address
     [ value swap state memory>> set-at ] each
     state ;
 
