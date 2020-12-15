@@ -7,20 +7,20 @@ IN: 15
     "15.txt" utf8 file-lines
     first "," split [ string>number ] map ;
 
-: to-map ( numbers -- map )
+: to-table ( numbers -- table )
      but-last [ 2array ] map-index >hashtable ;
 
-:: compute-new-last ( map last len -- new-last )
-    last map at :> prev-index
+:: compute-new-end ( table end len -- new-end )
+    end table at :> prev-index
     prev-index [ len 1 - prev-index - ] [ 0 ] if ;
 
-:: say-number ( map last len -- map' last' len' )
-    map last len compute-new-last :> new-last
-    len 1 - last map set-at
-    map new-last len 1 + ;
+:: say-number ( table end len -- table' end' len' )
+    table end len compute-new-end :> new-end
+    len 1 - end table set-at
+    table new-end len 1 + ;
 
 :: solve ( numbers n -- answer )
-    numbers [ to-map ] [ last ] [ length ] tri
+    numbers [ to-table ] [ last ] [ length ] tri
     [ n swap - ] keep swap [ say-number ] times
     drop nip ;
 
