@@ -21,7 +21,7 @@ IN: 15
 
 :: solve ( numbers n -- answer )
     numbers [ to-table ] [ last ] [ length ] tri
-    [ n swap - ] keep swap [ say-number ] times
+    dup n swap - [ say-number ] times
     drop nip ;
 
 : part1 ( -- answer ) input 2020 solve ;
