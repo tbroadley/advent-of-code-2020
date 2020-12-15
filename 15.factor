@@ -19,16 +19,13 @@ IN: 15
     len 1 - last map set-at
     map new-last len 1 + ;
 
-: part1 ( -- answer )
-    input [ to-map ] [ last ] [ length ] tri
-    [ 2020 swap - ] keep swap [ say-number ] times
+:: solve ( numbers n -- answer )
+    numbers [ to-map ] [ last ] [ length ] tri
+    [ n swap - ] keep swap [ say-number ] times
     drop nip ;
 
-: part2 ( -- answer )
-    input [ to-map ] [ last ] [ length ] tri
-    [ 30000000 swap - ] keep swap [ say-number ] times
-    drop nip ;
-
+: part1 ( -- answer ) input 2020 solve ;
+: part2 ( -- answer ) input 30000000 solve ;
 
 part1 .
 part2 .
