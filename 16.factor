@@ -33,9 +33,11 @@ C: <input> input
     "16.txt" utf8 file-lines
     { "" } split first3 parse-input ;
 
+: in-bound? ( bound value -- ? )
+    swap [ lo>> ] [ hi>> ] bi between? ;
+
 :: is-invalid-value? ( fields value -- ? )
-    fields [ bounds>> ] map concat
-    [ value swap [ lo>> ] [ hi>> ] bi between? not ] all? ;
+    fields [ bounds>> [ value in-bound? not ] all? ] all? ;
 
 : find-invalid-values ( fields ticket -- values )
     values>> [ dupd is-invalid-value? ] filter nip ;
