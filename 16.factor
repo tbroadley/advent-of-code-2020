@@ -41,6 +41,7 @@ C: <input> input
     [ dupd find-invalid-values ] map concat sum nip ;
 
 
+
 : remove-invalid-tickets ( input -- input' )
     [ fields>> ] keep
     [ [ dupd find-invalid-values empty? ] filter ] change-tickets
