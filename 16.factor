@@ -1,5 +1,5 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint sequences math.parser sets
-arrays locals combinators accessors splitting strings assocs math.ranges fry math.combinatorics ;
+arrays locals combinators accessors splitting strings assocs math.ranges fry math.combinatorics
 
 IN: 15
 
@@ -47,11 +47,29 @@ C: <input> input
     [ [ dupd find-invalid-values empty? ] filter ] change-tickets
     nip ;
 
-:: (field-order) ( fields-left tickets acc -- order )
-    fields-left empty?
-    [ acc ] [ { } ] if ;
+:: field-valid? ( field tickets field-n -- ? )
+    tickets [ values>> field-n swap nth ] map
+    [ field 1array swap is-invalid-value? not ] all? ;
 
-: field-order ( input -- order )
+:: valid-fields ( fields-left tickets field-n -- fields )
+    fields-left [ tickets field-n field-valid? ] filter ;
+
+DEFER: (field-order)
+
+:: ((field-order)) ( valid fields-left tickets acc -- order/? )
+    fields-left [ name>> valid name>> = not ] filter
+    tickets
+    acc valid suffix (field-order) ;
+
+:: (field-order) ( fields-left tickets acc -- order/? )
+    fields-left tickets acc length valid-fields :> valids
+    {
+      { [ fields-left empty? ] [ acc ] }
+      { [ valids empty? ] [ f ] }
+      [ valids [ fields-left tickets acc ((field-order)) ] find nip ]
+    } cond ;
+
+: field-order ( input -- order/? )
     [ fields>> ] [ tickets>> ] bi
     { } (field-order) ;
 
