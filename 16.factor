@@ -1,9 +1,13 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint sequences math.parser sets
-arrays locals combinators accessors splitting strings assocs math.ranges fry math.combinatorics io ;
+arrays locals combinators accessors splitting strings assocs math.ranges fry math.combinatorics io
+math.order ;
 
 IN: 15
 
-TUPLE: field name ranges ;
+TUPLE: bound lo hi ;
+C: <bound> bound
+
+TUPLE: field name bounds ;
 C: <field> field
 
 TUPLE: ticket values ;
@@ -14,7 +18,7 @@ C: <input> input
 
 : parse-field ( line -- field )
     ": " split1 " or " split1 2array
-    [ "-" split1 [ string>number ] bi@ [a,b] ] map
+    [ "-" split1 [ string>number ] bi@ <bound> ] map
     <field> ;
 
 : parse-ticket ( line -- ticket )
@@ -30,7 +34,8 @@ C: <input> input
     { "" } split first3 parse-input ;
 
 :: is-invalid-value? ( fields value -- ? )
-    fields [ ranges>> [ value swap member? not ] all? ] all? ;
+    fields [ bounds>> ] map concat
+    [ value swap [ lo>> ] [ hi>> ] bi between? not ] all? ;
 
 : find-invalid-values ( fields ticket -- values )
     values>> [ dupd is-invalid-value? ] filter nip ;
