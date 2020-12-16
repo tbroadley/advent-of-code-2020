@@ -21,7 +21,7 @@ C: <input> input
     "," split [ string>number ] map <ticket> ;
 
 : parse-input ( fields-sec my-ticket tickets -- input )
-    [ 1 tail [ parse-field ] map ]
+    [ [ parse-field ] map ]
     [ second parse-ticket ]
     [ 1 tail [ parse-ticket ] map ] tri* <input> ;
 
