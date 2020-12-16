@@ -1,6 +1,6 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint sequences math.parser sets
 arrays locals combinators accessors splitting strings assocs math.ranges fry math.combinatorics io
-math.order ;
+assocs math.order sorting ;
 
 IN: 15
 
@@ -62,32 +62,30 @@ C: <input> input
 :: field-valid? ( field tickets field-n -- ? )
     tickets [ field-n nth-value field is-valid-value? ] all? ;
 
-:: valid-fields ( fields-left tickets field-n -- fields )
-    fields-left [ tickets field-n field-valid? ] filter ;
+:: valid-field-n ( field field-ns tickets -- ? )
+    field-ns [| field-n | field tickets field-n field-valid? ] filter
+    [ length 1 = ] [ first ] bi and ;
+
+:: find-next-field ( fields-left tickets acc -- column next-field )
+    acc length fields-left length + [0,b) :> field-ns
+    field-ns [ acc key? not ] filter :> remaining-field-ns
+    fields-left [ remaining-field-ns tickets valid-field-n ] map-find ;
 
 DEFER: (field-order)
 
-:: (((field-order))) ( fields-left tickets acc -- order/? )
-    acc length dup fields-left length + [a,b) :> field-ns-left
-    field-ns-left [| field-n | fields-left tickets field-n valid-fields empty? ] any?
-    [ f ] [ fields-left tickets acc (field-order) ] if ;
-
-:: ((field-order)) ( valid fields-left tickets acc -- order/? )
-    fields-left [ name>> valid name>> = not ] filter :> fields-left'
-    acc valid suffix :> acc'
-    fields-left' tickets acc' (((field-order))) ;
+:: ((field-order)) ( fields-left tickets acc -- order/? )
+    fields-left tickets acc find-next-field :> ( field-n next-field )
+    fields-left [ name>> next-field name>> = not ] filter :> fields-left'
+    acc field-n next-field 2array suffix :> acc'
+    fields-left' tickets acc' (field-order) ;
 
 :: (field-order) ( fields-left tickets acc -- order/? )
-    fields-left tickets acc length valid-fields :> valids
-    {
-      { [ fields-left empty? ] [ acc ] }
-      { [ valids empty? ] [ f ] }
-      [ valids [ fields-left tickets acc ((field-order)) ] map-find drop ]
-    } cond ;
+    fields-left empty? [ acc [ first ] sort-with [ second ] map ]
+    [ fields-left tickets acc ((field-order)) ] if ;
 
 : field-order ( input -- order/? )
     [ fields>> ] [ tickets>> ] bi
-    { } (field-order) ;
+    { } clone (field-order) ;
 
 : to-permutation ( order fields -- permutation )
     [ [ name>> ] map ] bi@
@@ -98,7 +96,7 @@ DEFER: (field-order)
 
 : part2 ( -- answer )
     get-input remove-invalid-tickets
-    [ field-order ] keep [ fields>> to-permutation ] keep
+    [ field-order ] keep [ fields>> swap to-permutation ] keep
     my-ticket>> values>> permute 6 head product ;
 
 
