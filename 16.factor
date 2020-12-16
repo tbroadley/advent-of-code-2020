@@ -66,7 +66,7 @@ DEFER: (field-order)
     {
       { [ fields-left empty? ] [ acc ] }
       { [ valids empty? ] [ f ] }
-      [ valids [ fields-left tickets acc ((field-order)) ] find nip ]
+      [ valids [ fields-left tickets acc ((field-order)) ] map-find drop ]
     } cond ;
 
 : field-order ( input -- order/? )
