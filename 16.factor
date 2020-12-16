@@ -46,16 +46,25 @@ C: <input> input
     [ [ dupd find-invalid-values empty? ] filter ] change-tickets
     nip ;
 
-: field-order ( input -- order )
-    fields>> [ name>> ] map inverse-permutation ;
+:: (field-order) ( fields-left tickets acc -- order )
+    fields-left empty?
+    [ acc ] [ { } ] if ;
 
-: permute ( order seq -- seq' )
+: field-order ( input -- order )
+    [ fields>> ] [ tickets>> ] bi
+    { } (field-order) ;
+
+: to-permutation ( order fields -- permutation )
+    [ [ name>> ] map ] bi@
+    swap [ over index ] map nip ;
+
+: permute ( permutation seq -- seq' )
     swap [ over nth ] map nip ;
 
 : part2 ( -- answer )
     get-input remove-invalid-tickets
-    [ field-order ] keep my-ticket>> values>> permute
-    6 head product ;
+    [ field-order ] keep [ fields>> to-permutation ] keep
+    my-ticket>> values>> permute 6 head product ;
 
 
 
