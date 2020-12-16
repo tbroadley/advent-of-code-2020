@@ -1,5 +1,5 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint sequences math.parser sets
-arrays locals combinators accessors splitting strings assocs math.ranges fry math.combinatorics ;
+arrays locals combinators accessors splitting strings assocs math.ranges fry math.combinatorics io ;
 
 IN: 15
 
@@ -56,10 +56,15 @@ C: <input> input
 
 DEFER: (field-order)
 
+:: (((field-order))) ( fields-left tickets acc -- order/? )
+    acc length dup fields-left length + [a,b) :> field-ns-left
+    field-ns-left [| field-n | fields-left tickets field-n valid-fields empty? ] any?
+    [ f ] [ fields-left tickets acc (field-order) ] if ;
+
 :: ((field-order)) ( valid fields-left tickets acc -- order/? )
-    fields-left [ name>> valid name>> = not ] filter
-    tickets
-    acc valid suffix (field-order) ;
+    fields-left [ name>> valid name>> = not ] filter :> fields-left'
+    acc valid suffix :> acc'
+    fields-left' tickets acc' (((field-order))) ;
 
 :: (field-order) ( fields-left tickets acc -- order/? )
     fields-left tickets acc length valid-fields :> valids
