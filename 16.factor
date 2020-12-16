@@ -1,5 +1,5 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint sequences math.parser sets
-arrays locals combinators accessors splitting strings assocs math.ranges fry math.combinatorics
+arrays locals combinators accessors splitting strings assocs math.ranges fry math.combinatorics ;
 
 IN: 15
 
