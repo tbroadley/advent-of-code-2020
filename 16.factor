@@ -54,9 +54,13 @@ C: <input> input
     [ [ dupd find-invalid-values empty? ] filter ] change-tickets
     nip ;
 
+: nth-value ( ticket n -- value ) swap values>> nth ;
+
+: is-valid-value? ( value field -- ? )
+    1array swap is-invalid-value? not ;
+
 :: field-valid? ( field tickets field-n -- ? )
-    tickets [ values>> field-n swap nth ] map
-    [ field 1array swap is-invalid-value? not ] all? ;
+    tickets [ field-n nth-value field is-valid-value? ] all? ;
 
 :: valid-fields ( fields-left tickets field-n -- fields )
     fields-left [ tickets field-n field-valid? ] filter ;
