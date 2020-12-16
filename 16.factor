@@ -1,5 +1,5 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint sequences math.parser sets
-arrays locals combinators accessors splitting strings assocs math.ranges fry ;
+arrays locals combinators accessors splitting strings assocs math.ranges fry math.combinatorics ;
 
 IN: 15
 
@@ -32,12 +32,32 @@ C: <input> input
 :: is-invalid-value? ( fields value -- ? )
     fields [ ranges>> [ value swap member? not ] all? ] all? ;
 
-: find-invalid-values ( fields tickets -- values )
-    [ values>> ] map concat
-    [ dupd is-invalid-value? ] filter nip ;
+: find-invalid-values ( fields ticket -- values )
+    values>> [ dupd is-invalid-value? ] filter nip ;
 
 : part1 ( -- answer )
     get-input
-    [ fields>> ] [ tickets>> ] bi find-invalid-values sum ;
+    [ fields>> ] [ tickets>> ] bi
+    [ dupd find-invalid-values ] map concat sum nip ;
+
+
+: remove-invalid-tickets ( input -- input' )
+    [ fields>> ] keep
+    [ [ dupd find-invalid-values empty? ] filter ] change-tickets
+    nip ;
+
+: field-order ( input -- order )
+    fields>> [ name>> ] map inverse-permutation ;
+
+: permute ( order seq -- seq' )
+    swap [ over nth ] map nip ;
+
+: part2 ( -- answer )
+    get-input remove-invalid-tickets
+    [ field-order ] keep my-ticket>> values>> permute
+    6 head product ;
+
+
 
 part1 .
+part2 .
