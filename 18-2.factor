@@ -20,6 +20,7 @@ DEFER: expr
 : rep ( l op r quot -- parser )
     [ [ sp ] bi@ 2seq repeat0 2seq ] dip action ; inline
 
+! seq is an AST that looks like { 7 { { "*" 7 } { "*" 8 } } }
 : eval ( seq quot -- n )
     [ [ second [ second ] map ] [ first ] bi ] dip
     reduce ; inline
@@ -31,8 +32,7 @@ DEFER: expr
 
 : input ( -- lines ) "18.txt" utf8 file-lines ;
 
-: part1 ( -- answer )
-    input [ expr parse ] map sum ;
+: part1 ( -- answer ) input [ expr parse ] map sum ;
 
 part1 .
 
