@@ -1,6 +1,6 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint sequences
 arrays locals lists combinators grouping math.ranges assocs hashtables
-sequences.deep sets slots.syntax ;
+sequences.deep sets slots.syntax io ;
 
 IN: 11
 
@@ -8,7 +8,7 @@ TUPLE: pos x y z t ;
 C: <pos> pos
 
 :: build-row ( row x -- alist )
-    row [| cell y | x y 0 <pos> cell 2array ] map-index ;
+    row [| cell y | x y 0 0 <pos> cell 2array ] map-index ;
 
 : input ( -- lines )
     "17.txt" utf8 file-lines
@@ -19,12 +19,12 @@ C: <pos> pos
     [ flatten ] map ;
 
 : adjacent-cell-offsets ( -- offsets )
-    3 { -1 0 1 } <repetition> cartesian-product*
-    [ [ 0 = ] all? not ] filter [ first3 <pos> ] map ;
+    4 { -1 0 1 } <repetition> cartesian-product*
+    [ [ 0 = ] all? not ] filter [ first4 <pos> ] map ;
 
 : offset ( pos offset -- pos' )
-    [ slots{ x y z } ] bi@ zip [ first2 + ] map
-    first3 <pos> ;
+    [ slots{ x y z t } ] bi@ zip [ first2 + ] map
+    first4 <pos> ;
 
 : adjacent-cell-positions ( pos -- posseq )
      adjacent-cell-offsets [ over offset ] map nip ;
@@ -51,7 +51,7 @@ C: <pos> pos
     [ first2 swap state set-at ] each ;
 
 : part1 ( -- answer )
-    input 6 [ dup apply-rules ] times
+    input 6 [ dup apply-rules "applied rules" . flush ] times
     values [ on? ] count ;
 
 part1 .
