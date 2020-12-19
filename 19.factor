@@ -30,8 +30,15 @@ IN: 19
     "19.txt" utf8 file-lines { "" } split first2
     [ parse-rules ] dip ;
 
-: matches-rules? ( rules message rule-numbers -- ? )
-    3drop f ;
+: without-matching-prefix ( rules message rule-number -- suffix )
+    pick at dup number ?
+    [ dupd 1string head? [ drop ] [ nip ] if ]
+    [ ]
+
+:: matches-rules? ( rules message rule-numbers -- ? )
+    rule-numbers message
+    [ [ 2dup ] dip without-matching-prefix ] reduce
+    2nip [ string? ] [ empty? ] bi and ;
 
 : matches-rule? ( rules message rule-number -- ? )
     pick at dup number?
