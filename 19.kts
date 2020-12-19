@@ -4,12 +4,12 @@ import java.io.File
 import kotlin.time.measureTime
 
 sealed class RuleDefinition {
-  data class Literal(val char: Char) : RuleDefinition()
+  data class Literal(val char: Char?) : RuleDefinition()
   data class Expansion(val definitions: List<List<Int>>) : RuleDefinition()
 }
 
-typealias Expansions = Map<Int, Expansion>
-typealias Literals = Map<Int, Literal>
+typealias Expansions = MutableMap<Int, Expansion>
+typealias Literals = MutableMap<Int, Literal>
 
 fun matches(expansions: Expansions, literals: Literals, ruleNumber: Int, message: String): Boolean {
   val map = mutableMapOf<Triple<Int, Int, Int>, Boolean>().withDefault { false }
@@ -17,7 +17,7 @@ fun matches(expansions: Expansions, literals: Literals, ruleNumber: Int, message
 
   for (s in message.indices) {
     for ((ruleNum, rule) in literals) {
-      map[Triple(1, s, ruleNum)] = rule.char == message[s]
+      map[Triple(1, s, ruleNum)] = rule.char == null || rule.char == message[s]
     }
   }
 
@@ -25,9 +25,8 @@ fun matches(expansions: Expansions, literals: Literals, ruleNumber: Int, message
     for (s in 0..(len - l)) {
       for ((ruleNum, rule) in expansions) {
         map[Triple(l, s, ruleNum)] = rule.definitions.any { definition ->
-          if (definition.size == 1) {
-            return@any map.getValue(Triple(l, s, definition[0]))
-          }
+          if (definition.size != 2) println("$ruleNum, $definition, ${definition.size}")
+          check(definition.size == 2)
 
           (1..(l - 1)).any { p ->
             map.getValue(Triple(p, s, definition[0])) &&
@@ -55,8 +54,15 @@ val input = File("19.txt").readLines()
 val emptyLineIndex = input.indexOf("")
 
 val rules = input.take(emptyLineIndex).map { parseRule(it) }.toMap()
+
 val expansions = rules.filter { it.value is Expansion } as Expansions
 val literals = rules.filter { it.value is Literal } as Literals
+
+expansions[8] = expansions.getValue(42) // To handle the rule "8: 42"
+
+// To handle the rule "38: 20 | 39"
+expansions.remove(38)
+literals[38] = Literal(char = null)
 
 val messages = input.drop(emptyLineIndex + 1)
 
