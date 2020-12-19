@@ -15,16 +15,14 @@ fun matches(expansions: Expansions, literals: Literals, ruleNumber: Int, message
   val map = mutableMapOf<Triple<Int, Int, Int>, Boolean>().withDefault { false }
   val len = message.length
 
-  for (s in 1..len) {
+  for (s in message.indices) {
     for ((ruleNum, rule) in literals) {
-      if (rule !is Literal || rule.char != message[s - 1]) continue
-
-      map[Triple(1, s, ruleNum)] = true
+      map[Triple(1, s, ruleNum)] = rule.char == message[s]
     }
   }
 
   for (l in 2..len) {
-    for (s in 1..(len - l + 1)) {
+    for (s in 0..(len - l)) {
       for ((ruleNum, rule) in expansions) {
         map[Triple(l, s, ruleNum)] = rule.definitions.any { definition ->
           if (definition.size == 1) {
@@ -40,7 +38,7 @@ fun matches(expansions: Expansions, literals: Literals, ruleNumber: Int, message
     }
   }
 
-  return map.getValue(Triple(len, 1, ruleNumber))
+  return map.getValue(Triple(len, 0, ruleNumber))
 }
 
 fun parseRule(line: String): Pair<Int, RuleDefinition> {
