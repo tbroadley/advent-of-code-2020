@@ -20,10 +20,4 @@ IN: 20
     "20.txt" utf8 file-lines { "" } split
     [ parse-tile 2array ] map ;
 
-:: count-matching-edges ( seq s -- count )
-    s reverse :> s'
-    seq [ [ s sequence= ] [ s' sequence= ] bi or ] count ;
-
-input [ values concat ] keep
-[ dupd [ dupd count-matching-edges ] map nip ] map-values nip
-[ second [ 1 = ] count 2 = ] filter [ first ] map product .
+input .
