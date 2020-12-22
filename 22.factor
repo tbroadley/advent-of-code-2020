@@ -9,10 +9,14 @@ IN: 21
     "22.txt" utf8 file-lines { "" } split1
     [ 1 tail [ string>number ] map ] bi@ ;
 
-:: play-turn ( deck1 deck2 -- deck1' deck2' )
-    deck1 first deck2 first >
-    [ deck1 1 tail deck1 first suffix deck2 first suffix deck2 1 tail ]
-    [ deck1 1 tail deck2 1 tail deck2 first suffix deck1 first suffix ] if ;
+: move-cards ( deck1 deck2 -- deck1' deck2' )
+    [ 1 cut ] bi@
+    [| top1 rest1 top2 rest2 | rest1 top1 append top2 append rest2 ] call ;
+
+: play-turn ( deck1 deck2 -- deck1' deck2' )
+    2dup [ first ] bi@ >
+    [ move-cards ]
+    [ swap move-cards swap ] if ;
 
 : play-game ( deck1 deck2 -- deck )
     [ 2dup [ empty? ] bi@ or ] [ play-turn ] until
