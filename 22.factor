@@ -3,7 +3,7 @@ USING: kernel io.files io.encodings.utf8 math prettyprint
        combinators splitting arrays
        math.ranges assocs namespaces continuations accessors ;
 
-IN: 21
+IN: 22
 
 : input ( -- deck1 deck2 )
     "22.txt" utf8 file-lines { "" } split1
@@ -30,38 +30,35 @@ IN: 21
 
 
 
-SYMBOL: seen-positions
-ERROR: recursive-game deck1 ;
+: seen? ( seen deck1 deck2 -- ? ) 2array swap index ;
 
-: position-seen? ( deck1 deck2 -- ? )
-    2array seen-positions get-global index ;
-
-:: mark-position-seen ( deck1 deck2 -- )
-    seen-positions get-global deck1 deck2 2array suffix :> value
-    value seen-positions set-global ;
+: mark-seen ( seen deck1 deck2 -- seen' ) 2array suffix ;
 
 : recurse? ( deck -- ? ) [ first ] [ length 1 - ] bi <= ;
 
 DEFER: play-recursive-turn
+DEFER: play-recursive-game
 : (play-recursive-turn) ( deck1 deck2 -- deck1' deck2' )
     2dup [ 1 cut swap first head ] bi@
-    [ play-recursive-turn ] play-game nip
+    [let :> ( deck1 deck2 ) { } clone deck1 deck2 play-recursive-game nip ]
     [ move-cards ] [ swap move-cards swap ] if ;
 
-: play-recursive-turn ( deck1 deck2 -- deck1' deck2' )
+:: play-recursive-turn ( seen deck1 deck2 -- seen' deck1' deck2' )
     {
-      { [ 2dup 2array . 2dup position-seen? ] [ drop recursive-game ] }
+      { [ seen deck1 deck2 seen? ] [ seen deck1 { } clone ] }
       {
-        [ 2dup mark-position-seen 2dup [ recurse? ] bi@ and ]
-        [ (play-recursive-turn) ]
+        [ seen deck1 deck2 mark-seen deck1 deck2 [ recurse? ] bi@ and ]
+        [ deck1 deck2 (play-recursive-turn) ]
       }
-      [ play-turn ]
+      [ deck1 deck2 play-turn ]
     } cond ;
 
+: play-recursive-game ( seen deck1 deck2 -- deck win1 )
+    [ 2dup [ empty? ] bi@ or ] [ play-recursive-turn ] until nipd
+    dup empty? [ drop t ] [ nip f ] if ;
+
 : part2 ( -- answer )
-    { } seen-positions set-global
-    [ input [ play-recursive-turn ] play-game drop compute-score ]
-    [ dup recursive-game? [ deck1>> compute-score ] [ throw ] if ] recover ;
+    { } input play-recursive-game drop compute-score ;
 
 
 
