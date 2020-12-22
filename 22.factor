@@ -10,8 +10,7 @@ IN: 21
     [ 1 tail [ string>number ] map ] bi@ ;
 
 : move-cards ( deck1 deck2 -- deck1' deck2' )
-    [ 1 cut ] bi@
-    [| top1 rest1 top2 rest2 | rest1 top1 append top2 append rest2 ] call ;
+    [ 1 cut ] bi@ [ swapd 3append ] dip ;
 
 : play-turn ( deck1 deck2 -- deck1' deck2' )
     2dup [ first ] bi@ >
