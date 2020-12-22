@@ -17,15 +17,15 @@ IN: 21
     [ move-cards ]
     [ swap move-cards swap ] if ;
 
-: play-game ( deck1 deck2 -- deck )
-    [ 2dup [ empty? ] bi@ or ] [ play-turn ] until
-    2array [ empty? not ] filter first ;
+: play-game ( deck1 deck2 quot -- deck win1 )
+    [ 2dup [ empty? ] bi@ or ] swap until
+    dup empty? [ drop t ] [ nip f ] if ; inline
 
 : compute-score ( deck -- score )
     reverse dup length [1,b] zip
     [ first2 * ] map sum ;
 
 : part1 ( -- answer )
-    input play-game compute-score ;
+    input [ play-turn ] play-game drop compute-score ;
 
 part1 .
