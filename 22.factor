@@ -1,7 +1,7 @@
 USING: kernel io.files io.encodings.utf8 math prettyprint
        math math.parser sequences locals
        combinators splitting arrays
-       math.ranges assocs ;
+       math.ranges assocs namespaces continuations accessors ;
 
 IN: 21
 
@@ -28,4 +28,42 @@ IN: 21
 : part1 ( -- answer )
     input [ play-turn ] play-game drop compute-score ;
 
+
+
+SYMBOL: seen-positions
+ERROR: recursive-game deck1 ;
+
+: position-seen? ( deck1 deck2 -- ? )
+    2array seen-positions get-global index ;
+
+:: mark-position-seen ( deck1 deck2 -- )
+    seen-positions get-global deck1 deck2 2array suffix :> value
+    value seen-positions set-global ;
+
+: recurse? ( deck -- ? ) [ first ] [ length 1 - ] bi <= ;
+
+DEFER: play-recursive-turn
+: (play-recursive-turn) ( deck1 deck2 -- deck1' deck2' )
+    2dup [ 1 cut swap first head ] bi@
+    [ play-recursive-turn ] play-game nip
+    [ move-cards ] [ swap move-cards swap ] if ;
+
+: play-recursive-turn ( deck1 deck2 -- deck1' deck2' )
+    {
+      { [ 2dup 2array . 2dup position-seen? ] [ drop recursive-game ] }
+      {
+        [ 2dup mark-position-seen 2dup [ recurse? ] bi@ and ]
+        [ (play-recursive-turn) ]
+      }
+      [ play-turn ]
+    } cond ;
+
+: part2 ( -- answer )
+    { } seen-positions set-global
+    [ input [ play-recursive-turn ] play-game drop compute-score ]
+    [ dup recursive-game? [ deck1>> compute-score ] [ throw ] if ] recover ;
+
+
+
 part1 .
+part2 .
